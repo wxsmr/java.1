@@ -1,0 +1,133 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的天气</title>
+</head>
+    <style type="text/css" >
+        body{
+            background: #f6f9fe url("/html/yun.gif") no-repeat center top;
+            background-size: 100% 800px;
+        }
+        p{
+            display: inline-block;
+            color: #fff;
+            height: 20px;
+            line-height: 20px;
+        }
+        #ct-current{
+            height: 800px;
+            width:580px;
+            margin: 0 auto;
+        }
+        #ct-current #txt-pub-time{
+            font-size: 14px;
+            color: #fff;
+            opacity: .6;
+            height: 19px;
+            line-height: 19px;
+            margin-bottom: 20px;
+        }
+        #ct-current #ct-main #txt-city{
+            display: inline-block;
+            font-size: 86px;
+            color: #fff;
+            height: 86px;
+            line-height: 86px;
+        }
+        #ct-current #ct-main #txt-name,#txt-temperature {
+            display: inline-block;
+            font-size: 28px;
+            color: #fff;
+            line-height: 45px;
+            height: 45px;
+            margin-right: 24px;
+        }
+        #ct-current #ct-main .header {
+            border-radius: 18px;
+            height: 18px;
+            line-height: 18px;
+            font-size: 14px;
+            color: #fff;
+            padding: 3px 10px 3px 3px;
+        }
+        .txt-input-div{
+            float:right;
+            color: #fff;
+            height: 20px;
+            line-height: 51px;
+        }
+      
+    </style>
+<body>
+    <div id="ct-current">
+        <div class="container">
+            <p id="txt-pub-time">中央气象台 XX:XX发布</p>
+            <div class="txt-input-div">
+                搜索：<input type="text" id="txt-select-city" class="txt-select-city">
+            </div>
+            <div id="ct-main">
+                <p id="txt-city">未获取</p>
+                <p id="txt-temperature">18°</p>
+                <p id="txt-tianqi_text">天气：</p>
+                <p id="txt-name">未获取</p>
+                <div id="ct-aqi" class="air-level2">
+                    <div id="air-window" class="popwindow">
+                        <div class="header">空气质量指数 65&nbsp;良</div>
+                        </div>
+                    </div>
+                </div>
+                <ul id="ls-warning"></ul>
+            </div>
+            <div id="ct-other">
+                <p class="item"><i class="icon wind-1" id="icon-wind"></i> <span class="txt"
+                        id="txt-wind">东北风&nbsp;1级</span></p>
+                <p class="item"><i class="icon" id="icon-humidity"></i> <span class="txt"
+                        id="txt-humidity">湿度&nbsp;67%</span></p>
+                <p class="item"><i class="icon" id="icon-kPa"></i> <span class="txt" id="txt-kPa">气压&nbsp;1013hPa</span>
+                </p>
+                <p class="item show" id="info-limit"><i class="icon" id="icon-limit"></i> <span class="txt"
+                        id="txt-limit">限行&nbsp;1和6</span></p>
+            </div>
+            <div id="ct-tips">
+                <p id="txt-tips">你若安好，便是晴天~</p><a href="javascript:;" id="btn-tip-switch"
+                    style="display: inline-block;"></a>
+            </div>
+            <div id="ct-current-weather"></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function city_currentWeather(){
+        var url = "/city_currentWeather.json"
+        var request = new XMLHttpRequest();
+        request.open("get",url);
+        request.send();
+        request.onload = function () {
+            if (request.status == 200) {
+                var cityObj = JSON.parse(request.responseText);
+                console.log(cityObj);
+                document.getElementById("txt-city").innerHTML = cityObj.weatherinfo.city;
+                document.getElementById("txt-name").innerHTML = cityObj.weatherinfo.weather;
+            }
+        }
+    }
+    city_currentWeather();
+    var tsc = document.querySelector("#txt-select-city");
+    //绑定事件
+    tsc.addEventListener("blur",function(){
+        //获取输入的数据
+        var cityName = tsc.value;
+        var url = "/weather/select?cityName="+cityName;
+        var request = new XMLHttpRequest();
+        request.open("get",url);
+        request.send();
+        request.onload = function () {
+            if (request.status == 200) {
+                //获取json文件中查到的天气数据
+                city_currentWeather();
+            }
+        }
+    })
+</script>
+
+</html>
